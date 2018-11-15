@@ -19,5 +19,6 @@
 // Number of matrices to produce/consume
 #define LOOPS 1200
 
-
-
+counter_t *counterProd;
+counter_t *counterCons;
+void cleanup();

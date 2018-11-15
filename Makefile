@@ -10,7 +10,7 @@ pcMatrix: counter.c prodcons.c matrix.c pcmatrix.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
-	$(RM) -f $(binaries) *.o
+	$(RM) -f $(binaries) *.o *.out *.exe
 
 
  

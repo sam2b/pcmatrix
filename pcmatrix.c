@@ -52,51 +52,86 @@ int main (int argc, char * argv[])
   //
   // DELETE THIS CODE ON ASSIGNMENT 2 SUBMISSION
   // ----------------------------------------------------------
-  printf("MATRIX MULTIPLICATION DEMO:\n\n");
-  Matrix *m1, *m2, *m3;
-  for (int i=0;i<12;i++)
-  {
-    m1 = GenMatrixRandom();
-    m2 = GenMatrixRandom();
-    m3 = MatrixMultiply(m1, m2);
-    if (m3 != NULL)
-    {
-      DisplayMatrix(m1,stdout);
-      printf("    X\n");
-      DisplayMatrix(m2,stdout);
-      printf("    =\n");
-      DisplayMatrix(m3,stdout);
-      printf("\n");
-      FreeMatrix(m3);
-      FreeMatrix(m2);
-      FreeMatrix(m1);
-      m1=NULL;
-      m2=NULL;
-      m3=NULL;
-    }
-  }
-  return 0;
+  // printf("MATRIX MULTIPLICATION DEMO:\n\n");
+  // Matrix *m1, *m2, *m3;
+  // for (int i=0;i<12;i++)
+  // {
+  //   m1 = GenMatrixRandom();
+  //   m2 = GenMatrixRandom();
+  //   m3 = MatrixMultiply(m1, m2);
+  //   if (m3 != NULL)
+  //   {
+  //     DisplayMatrix(m1,stdout);
+  //     printf("    X\n");
+  //     DisplayMatrix(m2,stdout);
+  //     printf("    =\n");
+  //     DisplayMatrix(m3,stdout);
+  //     printf("\n");
+  //     FreeMatrix(m3);
+  //     FreeMatrix(m2);
+  //     FreeMatrix(m1);
+  //     m1=NULL;
+  //     m2=NULL;
+  //     m3=NULL;
+  //   }
+  // }
+  // return 0;
   // ----------------------------------------------------------
 
-  printf("Producing %d %dx%d matrices.\n",LOOPS, ROW, COL);
+  //printf("Producing %d %dx%d matrices.\n",LOOPS, ROW, COL);
+  printf("Producing %d matrices of random dimensions.\n", LOOPS);
   printf("Using a shared buffer of size=%d\n", MAX);
   printf("With %d producer and consumer thread(s).\n",numw);
   printf("\n");
 
-  pthread_t pr;
-  pthread_t co;
+  pthread_t *pr[NUMWORK];
+  pthread_t *co[NUMWORK];
 
+  // Initialize
   int prs = 0;
   int cos = 0;
   int prodtot = 0;
   int constot = 0;
   int consmul = 0;
+  counterProd = (counter_t *) malloc(sizeof(counter_t));
+  counterCons = (counter_t *) malloc(sizeof(counter_t));
+  counters_t *counters = (counters_t *) malloc(sizeof(counters_t));
+  counters->prod = counterProd;
+  counters->cons = counterCons;
+  init_cnt(counterProd);
+  init_cnt(counterCons);
+  initProdCons();
+
+  // Start concurrent threads!
+  for(int i = 0; i < NUMWORK; i++) {
+    pthread_create(pr[i], NULL, prod_worker, LOOPS);
+    pthread_create(co[i], NULL, cons_worker, LOOPS);
+  }
+
+  // End of work, prepare to exit this process.
+  for(int j = 0; j < NUMWORK; j++) {
+    pthread_join(*pr[j], NULL);
+    pthread_join(*co[j], NULL);
+  }
 
   // consume ProdConsStats from producer and consumer threads
-  // add up total matrix stats in prs, cos, prodtot, constot, consmul 
+  // add up total matrix stats in prs, cos, prodtot, constot, consmul
+  prs = stats->prodSum;
+  cos = stats->consSum;
+  prodtot = stats->prodTotal;
+  constot = stats->consTotal;
+  consmul = stats->multTotal;
+  printf("Sum of Matrix elements --> Produced=%d = Consumed=%d\n", prs, cos);
+  printf("Matrices produced=%d consumed=%d multiplied=%d\n", prodtot, constot, consmul);
 
-  printf("Sum of Matrix elements --> Produced=%d = Consumed=%d\n",prs,cos);
-  printf("Matrices produced=%d consumed=%d multiplied=%d\n",prodtot,constot,consmul);
-
+  //Clean up.
+  cleanup();
+  free(counters);
   return 0;
+}
+
+void cleanup() {
+  //cleanProdCons(); // BUG causing crash.
+  free(counterProd);
+  free(counterCons);
 }

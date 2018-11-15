@@ -14,10 +14,16 @@
 // multtotal - total number of matrices multipled 
 // matrixtotal - total number of matrces produced or consumed
 typedef struct prodcons {
-  int sumtotal;
-  int multtotal;
-  int matrixtotal;
+  int sumTotal;
+  int multTotal;
+  int prodTotal;
+  int consTotal;
+  int matrixTotal;
+  int prodSum;
+  int consSum;
 } ProdConsStats;
+
+ProdConsStats *stats;
 
 // PRODUCER-CONSUMER thread method function prototypes
 void *prod_worker(void *arg);
@@ -27,4 +33,5 @@ void *cons_worker(void *arg);
 int put(Matrix *value);
 Matrix * get();
 
-
+void initProdCons();
+void cleanProdCons();

@@ -17,7 +17,7 @@
 #include <string.h>
 #include <time.h>
 #include "matrix.h"
-
+#include "prodcons.h"
 
 // MATRIX ROUTINES
 Matrix * AllocMatrix(int r, int c)
@@ -53,6 +53,7 @@ void FreeMatrix(Matrix * mat)
   free(mat);
 }
 
+// Fills the matrix with values.
 void GenMatrix(Matrix * mat)
 {
   int height = mat->rows;
@@ -72,15 +73,17 @@ void GenMatrix(Matrix * mat)
 #endif
     }
   }
+  stats->matrixTotal++;
 }
 
+// Generates a matrix with up to 4 rows and up to 4 columns, and allocates and fills with values.
 Matrix * GenMatrixRandom()
 {
   int row = 1 + rand() % 4;
   int col = 1 + rand() % 4;
   Matrix * mat = AllocMatrix(row, col);
   GenMatrix(mat);
-  return mat; 
+  return mat;
 }
 
 Matrix * GenMatrixBySize(int row, int col)
@@ -93,12 +96,15 @@ Matrix * GenMatrixBySize(int row, int col)
 
 Matrix * MatrixMultiply(Matrix * m1, Matrix * m2)
 {
-  if ((m1==NULL) || (m2==NULL))
+  if ((m1==NULL) || (m2==NULL)) {
     printf("m1=%p  m2=%p!\n",m1,m2);
+    return NULL; // Not possible to multiply. Sam put this line here.
+  }
   int sum=0;
   if (m1->cols != m2->rows)
   {
-    return NULL;
+    printf("   m1->cols != m2->rows\n");
+    return NULL; // Not possible to multiply.
   }
   printf("MULTIPLY (%d x %d) BY (%d x %d):\n",m1->rows,m1->cols,m2->rows,m2->cols);
   Matrix * newmat = AllocMatrix(m1->rows, m2->cols);
@@ -117,6 +123,7 @@ Matrix * MatrixMultiply(Matrix * m1, Matrix * m2)
       sum=0;
     }
   }
+  stats->multTotal++;
   return newmat;
 }
 
@@ -170,7 +177,7 @@ int AvgElement(Matrix * mat) // int ** matrix, const int height, const int width
 #endif
     }
   printf("x=%d ele=%d\n",x, ele);
-  return x / ele; 
+  return x / ele;
 }
 
 int SumMatrix(Matrix * mat) {
@@ -185,11 +192,12 @@ int SumMatrix(Matrix * mat) {
    {
       for (j = 0; j < width; j++)
       {
-	  int *mm = a[i];
-	  y=mm[j];
-	  total = total+y;
+        int *mm = a[i];
+        y=mm[j];
+        total = total+y;
       }
    }
+   stats->sumTotal += total;
    return total;
 }
 
