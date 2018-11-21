@@ -30,8 +30,10 @@ void *prod_worker(void *arg);
 void *cons_worker(void *arg);
 
 // Routines to add and remove matrices from the bounded buffer
-int put(Matrix *value);
+void put(Matrix *value);
 Matrix* get();
 
 void initProdCons();
 void cleanProdCons();
+void displayCalculation(Matrix *dotProduct);
+void displayBoundedBuffer();

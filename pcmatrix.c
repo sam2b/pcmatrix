@@ -1,4 +1,9 @@
 /*
+ * Sam Brendel, 11/20/2018
+ * TCSS422 Operating Systems, Professor Wes Lloyd
+*/
+
+/*
  *  pcmatrix module
  *  Primary module providing control flow for the pcMatrix program
  * 
@@ -39,13 +44,12 @@
 #include "prodcons.h"
 #include "pcmatrix.h"
 
-int main (int argc, char * argv[])
-{
-  time_t t;
+int main (int argc, char * argv[]) {
+  //time_t t;
   int numw = NUMWORK;
 
   // Seed the random number generator with the system time
-  srand((unsigned) time(&t));
+  //srand((unsigned) time(&t));
 
   //
   // Demonstration code to show the use of matrix routines
@@ -127,11 +131,12 @@ int main (int argc, char * argv[])
   //Clean up.
   cleanup();
   free(counters);
+  printf("End of program.\n\n");
   return 0;
 }
 
 void cleanup() {
-  //cleanProdCons(); // BUG causing crash.
+  cleanProdCons(); // BUG causing crash on small loop count. i.e. 10.
   free(counterProd);
   free(counterCons);
 }
