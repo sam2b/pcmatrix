@@ -22,7 +22,8 @@
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-Matrix *multiplySet[2];
+Matrix* multiplySet[2];
+//struct matrix multiplySet[2];
 
 // Define Locks and Condition variables here
 int ready = 0; // The state variable.
@@ -56,24 +57,29 @@ int put(Matrix * value)
 Matrix* get() 
 {
   int index = get_cnt(counterCons) % MAX;
-  Matrix *retrieved;
+  Matrix* retrieved;
   retrieved = bigmatrix[index];
-  //printf("   get bigmatrix[%d] = %x\n", index, bigmatrix[index]);  // DEBUGGING
+  //printf("   get bigmatrix[%d] = %p\n", index, bigmatrix[index]);       // DEBUGGING
+  //printf("   bigmatrix[%d]->rows=%d\n", index, bigmatrix[index]->rows); // DEBUGGING
+  //printf("   bigmatrix[%d]->cols=%d\n", index, bigmatrix[index]->cols); // DEBUGGING
   //assert(retrieved != NULL);
-  if (retrieved != NULL) {
+  if (retrieved != NULL)
+  {
     stats->consSum += SumMatrix(retrieved);
     //FreeMatrix(bigmatrix[index]);
-    FreeMatrix(retrieved);
+    //FreeMatrix(retrieved); // Removed 5:03pm 11/20
     increment_cnt(counterCons);
     stats->consTotal++;
   }
+  //printf("Returning from get()\n"); // DEBUGGING
+  //DisplayMatrix(retrieved, stdout); // DEBUGGING
   return retrieved;
 }
 
 // Matrix PRODUCER worker thread
-void *prod_worker(void *arg)
+void* prod_worker(void* arg)
 {
-    int *prodLoops = (int *)&arg;
+    int* prodLoops = (int*)&arg;
     #if OUTPUT
         printf("In prod_worker...\n");
         printf("   prodLoops=%d\n", *prodLoops);
@@ -106,9 +112,9 @@ void *prod_worker(void *arg)
 }
 
 // Matrix CONSUMER worker thread
-void *cons_worker(void *arg) 
+void* cons_worker(void* arg) 
 {
-  int *consLoops = (int *)&arg;
+  int* consLoops = (int*)&arg;
 #if OUTPUT
   printf("In cons_worker...\n");
   printf("   consLoops=%d\n", *consLoops);
@@ -123,28 +129,35 @@ void *cons_worker(void *arg)
       pthread_cond_wait(&cond, &mutex);
     }
 
-    if (multiplySet[0] == NULL) {
+    //printf("   multiplySet[0]=%p\n", (Matrix *)&multiplySet[0]); // DEBUGGING
+    //printf("   multiplySet[1]=%p\n", (Matrix *)&multiplySet[1]); // DEBUGGING
+    if (multiplySet[0] == NULL)
+    {
       multiplySet[0] = get();
-      //assert(multiplySet[0] != NULL); // might be null, that's ok.
-    } else if (multiplySet[1] == NULL) {
-      multiplySet[1] = get();
-      //assert(multiplySet[1] != NULL); // might be null, that's ok.
+      //printf("   *multiplySet[0] = get()\n"); // DEBUGGING
     }
-
+    else if (multiplySet[1] == NULL)
+    {
+      multiplySet[1] = get();
+      //printf("   *multiplySet[1] = get()\n"); // DEBUGGING
+    }
+    //printf("Done.\n");
     ready = 0;
     pthread_cond_signal(&cond);
     pthread_mutex_unlock(&mutex);
 
     if (multiplySet[0] != NULL && multiplySet[1] != NULL)
     {
-      Matrix *dotProduct = MatrixMultiply(multiplySet[0], multiplySet[1]);
+      Matrix *m1 = multiplySet[0]; //BUG how do I get/set the array element as a Matrix* ?
+      Matrix *m2 = multiplySet[1];
+      Matrix* dotProduct = MatrixMultiply(m1, m2);
       if (dotProduct == NULL) {
         //printf("Did not multiply.\n");
       }
       multiplySet[0] = NULL;
       multiplySet[1] = NULL;
     }
-}
+  } // end for loop.
   return NULL;
 }
 

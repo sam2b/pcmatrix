@@ -20,7 +20,7 @@
 #include "prodcons.h"
 
 // MATRIX ROUTINES
-Matrix * AllocMatrix(int r, int c)
+Matrix* AllocMatrix(int r, int c)
 {
   Matrix * mat;
   mat = (Matrix *) malloc(sizeof(Matrix)); 
@@ -36,10 +36,11 @@ Matrix * AllocMatrix(int r, int c)
   mat->m=a;
   mat->rows=r;
   mat->cols=c;
+  //printf("   AllocMatrix: mat->rows=%d  mat->cols=%d\n", mat->rows, mat->cols); // DEBUGGING
   return mat;
 }
 
-void FreeMatrix(Matrix * mat)
+void FreeMatrix(Matrix* mat)
 {
   int r = mat->rows;
   //int c = mat->cols;
@@ -54,7 +55,7 @@ void FreeMatrix(Matrix * mat)
 }
 
 // Fills the matrix with values.
-void GenMatrix(Matrix * mat)
+void GenMatrix(Matrix* mat)
 {
   int height = mat->rows;
   int width = mat->cols;
@@ -64,7 +65,7 @@ void GenMatrix(Matrix * mat)
   {
     for (j = 0; j < width; j++)
     {
-      int * mm = a[i];
+      int* mm = a[i];
       //matrix[i * width + j] = rand() % 10;
       mm[j] = 1 + rand() % 10;
       //mm[j] = 1;
@@ -77,16 +78,17 @@ void GenMatrix(Matrix * mat)
 }
 
 // Generates a matrix with up to 4 rows and up to 4 columns, and allocates and fills with values.
-Matrix * GenMatrixRandom()
+Matrix* GenMatrixRandom()
 {
   int row = 1 + rand() % 4;
   int col = 1 + rand() % 4;
   Matrix * mat = AllocMatrix(row, col);
   GenMatrix(mat);
+  //printf("   GenMatrixRandom: mat->rows=%d  mat->cols=%d\n", mat->rows, mat->cols); // DEBUGGING
   return mat;
 }
 
-Matrix * GenMatrixBySize(int row, int col)
+Matrix* GenMatrixBySize(int row, int col)
 {
   printf("Generate random matrix (RxC) = (%dx%d)\n",row,col);
   Matrix * mat = AllocMatrix(row, col);
@@ -94,7 +96,7 @@ Matrix * GenMatrixBySize(int row, int col)
   return mat; 
 }
 
-Matrix * MatrixMultiply(Matrix * m1, Matrix * m2)
+Matrix* MatrixMultiply(Matrix* m1, Matrix* m2)
 {
   if ((m1==NULL) || (m2==NULL)) {
     printf("m1=%p  m2=%p!\n",m1,m2);
@@ -103,14 +105,14 @@ Matrix * MatrixMultiply(Matrix * m1, Matrix * m2)
   int sum=0;
   if (m1->cols != m2->rows)
   {
-    printf("   m1->cols != m2->rows\n");
+    //printf("   m1->cols=%d != m2->rows=%d\n", m1->cols, m2->rows); // DEBUGGING
     return NULL; // Not possible to multiply.
   }
   printf("MULTIPLY (%d x %d) BY (%d x %d):\n",m1->rows,m1->cols,m2->rows,m2->cols);
-  Matrix * newmat = AllocMatrix(m1->rows, m2->cols);
-  int ** nm = newmat->m;
-  int ** ma1 = m1->m;
-  int ** ma2 = m2->m;
+  Matrix* newmat = AllocMatrix(m1->rows, m2->cols);
+  int** nm = newmat->m;
+  int** ma1 = m1->m;
+  int** ma2 = m2->m;
   for (int c=0;c<newmat->rows;c++)
   {
     for (int d=0;d<newmat->cols;d++)
@@ -124,24 +126,25 @@ Matrix * MatrixMultiply(Matrix * m1, Matrix * m2)
     }
   }
   stats->multTotal++;
+  //printf("   Multiply success. multTotal=%d\n", stats->multTotal);
   return newmat;
 }
 
-void DisplayMatrix(Matrix * mat, FILE *stream)
+void DisplayMatrix(Matrix* mat, FILE* stream)
 {
   if ((mat == NULL) || (mat->m == NULL))
   { 
     printf("DisplayMatrix: EMPTY matrix\n");
     return;
   }
-  int ** matrix = mat->m;
+  int** matrix = mat->m;
   int height = mat->rows;
   int width = mat->cols; 
   int y=0;
   int i, j;
   for (i=0; i<height; i++)
   {
-    int *mm = matrix[i];
+    int* mm = matrix[i];
     fprintf(stream, "|");
     for (j=0; j<width; j++)
     {
@@ -156,9 +159,9 @@ void DisplayMatrix(Matrix * mat, FILE *stream)
 }
 
 
-int AvgElement(Matrix * mat) // int ** matrix, const int height, const int width)
+int AvgElement(Matrix* mat) // int ** matrix, const int height, const int width)
 {
-  int ** a = mat->m;
+  int** a = mat->m;
   int height = mat->rows;
   int width = mat->cols; 
   int x=0;
@@ -180,8 +183,8 @@ int AvgElement(Matrix * mat) // int ** matrix, const int height, const int width
   return x / ele;
 }
 
-int SumMatrix(Matrix * mat) {
-   int ** a = mat->m;
+int SumMatrix(Matrix* mat) {
+   int** a = mat->m;
    int height = mat->rows;
    int width = mat->cols;
    int i =0;
@@ -192,7 +195,7 @@ int SumMatrix(Matrix * mat) {
    {
       for (j = 0; j < width; j++)
       {
-        int *mm = a[i];
+        int* mm = a[i];
         y=mm[j];
         total = total+y;
       }

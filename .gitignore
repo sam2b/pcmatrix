@@ -1,5 +1,5 @@
-cmake-build-debug
-CMakeLists.txt
-*.gz
-*.out
+cmake - build - debug
+CMakeLists.txt * .gz * .out
 pcMatrix
+pcMatrix.exe
+.vscode/
