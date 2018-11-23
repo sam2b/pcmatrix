@@ -8,16 +8,17 @@
  *  Fall 2016
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <assert.h>
-#include <unistd.h>
-#include <sched.h>
-#include <string.h>
-#include <time.h>
 #include "matrix.h"
 #include "prodcons.h"
+#include <assert.h>
+#include <pthread.h>
+#include <sched.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 
 // MATRIX ROUTINES
 Matrix* AllocMatrix(int r, int c)
@@ -26,12 +27,26 @@ Matrix* AllocMatrix(int r, int c)
   mat = (Matrix *) malloc(sizeof(Matrix)); 
   int ** a;
   int i;
-  a = (int**) malloc(sizeof(int *) * r);
-  assert(a != 0);
+  //a = NULL;
+  //while (a == NULL)
+  //{
+    a = (int**) malloc(sizeof(int *) * r);
+    if (a == NULL) {
+      printf("   a=malloc() failed\n");
+    }
+  //}
+  assert(a != NULL); //assert(a != 0);
   for (i = 0; i < r; i++)
   {
-    a[i] = (int *) malloc(c * sizeof(int));
-    assert(a[i] != 0);
+    a[i] = NULL;
+    //while (a[i] == NULL)
+    //{
+      a[i] = (int *) malloc(c * sizeof(int));
+      if (a[i] == NULL) {
+        printf("   a[i]=malloc() failed\n");
+      }
+      //}
+      assert(a[i] != NULL); //assert(a[i] != 0);
   }
   mat->m=a;
   mat->rows=r;
@@ -80,16 +95,24 @@ void GenMatrix(Matrix* mat)
 // Generates a matrix with up to 4 rows and up to 4 columns, and allocates and fills with values.
 Matrix* GenMatrixRandom()
 {
-  int row = 1 + rand() % 4;
-  int col = 1 + rand() % 4;
+  int row = 1 + timeInMicroseconds() % 4; // 1 + rand() % 4;
+  int col = 1 + timeInMicroseconds() % 4; // 1 + rand() % 4;
   Matrix * mat = AllocMatrix(row, col);
   GenMatrix(mat);
   //printf("   GenMatrixRandom: mat->rows=%d  mat->cols=%d\n", mat->rows, mat->cols); // DEBUGGING
   return mat;
 }
 
-Matrix* GenMatrixBySize(int row, int col)
-{
+// Mitigates the perplexing issue of repeat random numbers with rand().  This solves the issue.
+int timeInMicroseconds() {
+  // #include <sys/time.h>
+  struct timeval time;
+  gettimeofday(&time, NULL);
+  int val = (int)time.tv_usec; // Time In Microseconds.
+  return val;
+}
+
+Matrix* GenMatrixBySize(int row, int col) {
   printf("Generate random matrix (RxC) = (%dx%d)\n",row,col);
   Matrix * mat = AllocMatrix(row, col);
   GenMatrix(mat);

@@ -1,7 +1,8 @@
 /*
- * Sam Brendel, 11/20/2018
+ * Sam Brendel, 11/23/2018
  * TCSS422 Operating Systems, Professor Wes Lloyd
-*/
+ * Disclaimer: Tested on Ubuntu 18.04.1 LTS, kernel 4.15.0-34-generic
+ */
 
 /*
  *  pcmatrix module

@@ -6,6 +6,7 @@
  *  TCSS 422 - Operating Systems
  *  Fall 2016
  */
+#include <stdio.h>
 
 #define ROW 5
 #define COL 5
@@ -28,3 +29,4 @@ int SumMatrix(Matrix * mat);
 Matrix * MatrixMultiply(Matrix * m1, Matrix * m2);
 void DisplayMatrix(Matrix * mat, FILE *stream);
 Matrix * GenMatrixBySize(int row, int col);
+int timeInMicroseconds();

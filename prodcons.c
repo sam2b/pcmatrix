@@ -1,7 +1,8 @@
 /*
- * Sam Brendel, 11/20/2018
+ * Sam Brendel, 11/23/2018
  * TCSS422 Operating Systems, Professor Wes Lloyd
-*/
+ * Disclaimer: Tested on Ubuntu 18.04.1 LTS, kernel 4.15.0-34-generic
+ */
 
 /*
  *  prodcons module
@@ -48,13 +49,18 @@ void put(Matrix * value) {
 }
 
 void displayBoundedBuffer() {
-  printf("Bounded buffer: {");
+  //printf("Bounded buffer: {");
   int i = 0;
+  printf("------BOUNDED BUFFER-------------------------------------------------------------------------------------------------------------------------------------------\n");
   for (; i < MAX - 1; i++)
   {
-    printf("i=%p, ", bigmatrix[i]);
+    //printf("i=%p, ", bigmatrix[i]);
+    if(bigmatrix[i] != NULL) {
+      DisplayMatrix(bigmatrix[i], stdout);
+    }
   }
-  printf("i=%p}\n", bigmatrix[i]);
+  //printf("i=%p}\n", bigmatrix[i]);
+  printf("-------------------------------------------------------------------------------------------------------------------------------------------------\n");
 }
 
 Matrix* get() {
@@ -119,7 +125,7 @@ void* cons_worker(void* arg) {
 
     if (multiplySet[0] != NULL && multiplySet[1] != NULL) {
       Matrix *dotProduct = MatrixMultiply(multiplySet[0], multiplySet[1]); // Possible that dotProduct will be null because of incompatible matrices.
-      
+
       // If the two matrices are compatible.
       if (dotProduct != NULL) {
         displayCalculation(dotProduct);
@@ -164,6 +170,7 @@ void cleanProdCons() {
   for (int i = 0; i < MAX; i++) {
     if (bigmatrix[i] != NULL) {
       FreeMatrix(bigmatrix[i]);
+      bigmatrix[i] = NULL;
     }
   }
 }
