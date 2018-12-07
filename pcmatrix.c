@@ -89,9 +89,6 @@ int main (int argc, char * argv[]) {
   printf("With %d producer and consumer thread(s).\n",numw);
   printf("\n");
 
-  pthread_t *pr[NUMWORK];
-  pthread_t *co[NUMWORK];
-
   // Initialize
   int prs = 0;
   int cos = 0;
@@ -107,17 +104,31 @@ int main (int argc, char * argv[]) {
   init_cnt(counterCons);
   initProdCons();
 
-  // Start concurrent threads!
+
+  //new code.
+  pthread_t pr;
+  pthread_t co;
+  pthread_create(&pr, NULL, prod_worker, LOOPS);
+  pthread_create(&co, NULL, cons_worker, LOOPS);
+
+  pthread_join(pr, NULL);
+  pthread_join(co, NULL);
+
+  /* //old code.
+  pthread_t *pr[NUMWORK];
+  pthread_t *co[NUMWORK];
+  
+   Start concurrent threads!
   for(int i = 0; i < NUMWORK; i++) {
     pthread_create(pr[i], NULL, prod_worker, LOOPS);
     pthread_create(co[i], NULL, cons_worker, LOOPS);
   }
-
-  // End of work, prepare to exit this process.
+  
+  //End of work, prepare to exit this process.
   for(int j = 0; j < NUMWORK; j++) {
     pthread_join(*pr[j], NULL);
     pthread_join(*co[j], NULL);
-  }
+  }*/
 
   // consume ProdConsStats from producer and consumer threads
   // add up total matrix stats in prs, cos, prodtot, constot, consmul
