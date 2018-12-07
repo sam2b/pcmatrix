@@ -95,8 +95,8 @@ void GenMatrix(Matrix* mat)
 // Generates a matrix with up to 4 rows and up to 4 columns, and allocates and fills with values.
 Matrix* GenMatrixRandom()
 {
-  int row = 1 + timeInMicroseconds() % 4; // 1 + rand() % 4;
-  int col = 1 + timeInMicroseconds() % 4; // 1 + rand() % 4;
+  int row = 1 + rand() % 4;               //1 + timeInMicroseconds() % 4;
+  int col = 1 + rand() % 4;               //1 + timeInMicroseconds() % 4;
   Matrix * mat = AllocMatrix(row, col);
   GenMatrix(mat);
   //printf("   GenMatrixRandom: mat->rows=%d  mat->cols=%d\n", mat->rows, mat->cols); // DEBUGGING

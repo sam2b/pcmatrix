@@ -1,7 +1,7 @@
 /*
- * Sam Brendel, 11/23/2018
+ * Sam Brendel, 11/23/2018, 12/6/2018
  * TCSS422 Operating Systems, Professor Wes Lloyd
- * Disclaimer: Tested on Ubuntu 18.04.1 LTS, kernel 4.15.0-34-generic
+ * Disclaimer: Tested on Ubuntu 18.04.1 LTS, kerne l4.15.0-42-generic
  */
 
 /*
@@ -46,11 +46,11 @@
 #include "pcmatrix.h"
 
 int main (int argc, char * argv[]) {
-  //time_t t;
+  time_t t;
   int numw = NUMWORK;
 
   // Seed the random number generator with the system time
-  //srand((unsigned) time(&t));
+  srand((unsigned) time(&t));
 
   //
   // Demonstration code to show the use of matrix routines
